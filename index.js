@@ -1,8 +1,12 @@
 const canvas = document.querySelector("canvas");
 const cvs = canvas.getContext("2d");
-
+const reStartBtn = document.querySelector(".restartBtn");
+const gameEnd = document.querySelector(".gameEnd");
+const scoreDisplay = document.querySelector(".scores");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
+let scores = 0;
+let game = true;
 
 class Player {
   constructor(x, y, radius, color) {
@@ -17,6 +21,10 @@ class Player {
     cvs.fillStyle = this.color;
     cvs.fill();
   }
+}
+
+function showGameOverText() {
+  gameEnd.style.display = "block";
 }
 
 class Projectile {
@@ -82,16 +90,19 @@ const enemies = [];
 
 function spawnEnemies() {
   setInterval(() => {
-    const radius = Math.random() *  30
+    let radius = Math.random() * 30;
+    if (radius < 4) {
+      radius = 7;
+    }
     let x;
     let y;
     if (Math.random() < 0.5) {
       x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
       y = Math.random() * canvas.height;
+    } else {
+      x = Math.random() * canvas.width;
+      y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
     }
-    else{
-        x = Math.random() * canvas.width; 
-        y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;    }
     const color = "green";
 
     const angle = Math.atan2(canvas.width / 2 - x, canvas.height / 2 - y);
@@ -100,28 +111,45 @@ function spawnEnemies() {
       y: Math.cos(angle),
     };
     enemies.push(new Enemies(x, y, radius, color, velocity));
-  }, 500);
+  }, 1000);
 }
 
 function animate() {
   requestAnimationFrame(animate);
-  cvs.clearRect(0, 0, canvas.width, canvas.height);
-  player.draw();
-  projectiles.forEach((projectile) => {
-    projectile.update();
-  });
-  enemies.forEach((enemy) => {
-    enemy.update();
-  });
+
+  if (game) {
+    cvs.clearRect(0, 0, canvas.width, canvas.height);
+    player.draw();
+    projectiles.forEach((projectile) => {
+      projectile.update();
+    });
+    enemies.forEach((enemy, index) => {
+      enemy.update();
+      const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+      if (dist - enemy.radius - player.radius < 0) {
+        showGameOverText();
+        game = false;
+      }
+      projectiles.forEach((projectile, projectileIndex) => {
+        const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
+        if (dist - enemy.radius - projectile.radius < 1) {
+          setTimeout(() => {
+            enemies.splice(index, 1);
+            projectiles.splice(projectileIndex, 1);
+            scores++;
+            scoreDisplay.innerText = scores;
+          }, 0);
+        }
+      });
+    });
+  }
 }
 
-console.log(player);
 addEventListener("click", (event) => {
   const angle = Math.atan2(
     event.clientX - canvas.width / 2,
     event.clientY - canvas.height / 2
   );
-  console.log(angle);
   const velocity = {
     x: Math.sin(angle) * 5,
     y: Math.cos(angle) * 5,
@@ -131,5 +159,14 @@ addEventListener("click", (event) => {
   );
 });
 
-animate();
-spawnEnemies();
+function init() {
+  animate();
+  spawnEnemies();
+}
+
+reStartBtn.addEventListener("click", () => {
+  init(); //새로운 게임 시작
+  gameEnd.style.display = "flex"; //종료창 제거
+  location.reload();
+});
+init();
