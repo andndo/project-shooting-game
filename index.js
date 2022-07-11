@@ -7,6 +7,7 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 let scores = 0;
 let game = true;
+const colors = ["orange", "purple", "red"];
 
 class Player {
   constructor(x, y, radius, color) {
@@ -109,8 +110,28 @@ class Enemies {
 const projectiles = [];
 const enemies = [];
 const superItems = [];
-
 let num = 1;
+
+function spawnSuperItem() {
+  setInterval(() => {
+    const radius = 30;
+    const color = "black";
+    let x;
+    let y;
+    if (Math.random() < 0.5) {
+      x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
+      y = Math.random() * canvas.height;
+    } else {
+      x = Math.random() * canvas.width;
+      y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
+    }
+    const velocity = {
+      x: 1,
+      y: 1,
+    };
+    superItems.push(new superItem(x, y, radius, color, velocity));
+  }, 2000);
+}
 function spawnEnemies() {
   setInterval(() => {
     if (num <= 10) {
@@ -137,7 +158,7 @@ function spawnEnemies() {
       y: Math.cos(angle) * num,
     };
     enemies.push(new Enemies(x, y, radius, color, velocity));
-  }, 500);
+  }, 1000);
 }
 
 function animate() {
@@ -158,13 +179,22 @@ function animate() {
       projectiles.forEach((projectile, projectileIndex) => {
         const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
         if (dist - enemy.radius - projectile.radius < 1) {
-          setTimeout(() => {
-            enemies.splice(index, 1);
-            projectiles.splice(projectileIndex, 1);
-            scores++;
-            scoreDisplay.innerText = scores;
-            document.getElementById("total").innerHTML=scores;
-          }, 0);
+          if (enemy.radius - 10 > 10) {
+            gsap.to(enemy, {
+              radius: enemy.radius - 10,
+            });
+            setTimeout(() => {
+              projectiles.splice(projectileIndex, 1);
+            }, 0);
+          } else {
+            setTimeout(() => {
+              enemies.splice(index, 1);
+              projectiles.splice(projectileIndex, 1);
+              scores++;
+              scoreDisplay.innerText = scores;
+              document.getElementById("total").innerHTML = scores;
+            }, 0);
+          }
         }
       });
     });
@@ -188,10 +218,11 @@ addEventListener("click", (event) => {
 function init() {
   animate();
   spawnEnemies();
+  spawnSuperItem();
 }
 
 reStartBtn.addEventListener("click", () => {
-  init(); 
+  init();
   gameEnd.style.display = "flex"; //종료창 제거
   location.reload();
 });
