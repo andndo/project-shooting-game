@@ -9,6 +9,16 @@
   z-index: 9999;
 }
 
+h3 {
+  top: 0;
+  position: absolute;
+}
+
+body {
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
 .end_inner {
   position: absolute;
   top: 50%;

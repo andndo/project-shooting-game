@@ -48,6 +48,27 @@ class Projectile {
   }
 }
 
+class superItem {
+  constructor(x, y, radius, color, velocity) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.color = color;
+    this.velocity = velocity;
+  }
+  draw() {
+    cvs.beginPath();
+    cvs.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    cvs.fillStyle = this.color;
+    cvs.fill();
+  }
+  update() {
+    this.draw();
+    this.x = this.x + this.velocity.x;
+    this.y = this.y + this.velocity.y;
+  }
+}
+
 const x = canvas.width / 2;
 const y = canvas.height / 2;
 
@@ -87,9 +108,14 @@ class Enemies {
 
 const projectiles = [];
 const enemies = [];
+const superItems = [];
 
+let num = 1;
 function spawnEnemies() {
   setInterval(() => {
+    if (num <= 10) {
+      num += 0.05;
+    }
     let radius = Math.random() * 30;
     if (radius < 4) {
       radius = 7;
@@ -104,19 +130,18 @@ function spawnEnemies() {
       y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
     }
     const color = "green";
-
     const angle = Math.atan2(canvas.width / 2 - x, canvas.height / 2 - y);
-    const velocity = {
-      x: Math.sin(angle),
-      y: Math.cos(angle),
+    let velocity;
+    velocity = {
+      x: Math.sin(angle) * num,
+      y: Math.cos(angle) * num,
     };
     enemies.push(new Enemies(x, y, radius, color, velocity));
-  }, 1000);
+  }, 500);
 }
 
 function animate() {
   requestAnimationFrame(animate);
-
   if (game) {
     cvs.clearRect(0, 0, canvas.width, canvas.height);
     player.draw();
@@ -138,6 +163,7 @@ function animate() {
             projectiles.splice(projectileIndex, 1);
             scores++;
             scoreDisplay.innerText = scores;
+            document.getElementById("total").innerHTML=scores;
           }, 0);
         }
       });
@@ -151,8 +177,8 @@ addEventListener("click", (event) => {
     event.clientY - canvas.height / 2
   );
   const velocity = {
-    x: Math.sin(angle) * 5,
-    y: Math.cos(angle) * 5,
+    x: Math.sin(angle) * 6,
+    y: Math.cos(angle) * 6,
   };
   projectiles.push(
     new Projectile(canvas.width / 2, canvas.height / 2, 5, "red", velocity)
@@ -165,7 +191,7 @@ function init() {
 }
 
 reStartBtn.addEventListener("click", () => {
-  init(); //새로운 게임 시작
+  init(); 
   gameEnd.style.display = "flex"; //종료창 제거
   location.reload();
 });
