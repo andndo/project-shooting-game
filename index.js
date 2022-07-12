@@ -9,6 +9,7 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 let scores = 0;
 let game = true;
+let item = false;
 
 class Player {
   constructor(x, y, radius, color) {
@@ -93,19 +94,27 @@ class Enemies {
     this.y = y;
     this.radius = radius;
     if (
-      "rgba(" +
+      "rgb(" +
         Math.random() * 255 +
         "," +
         Math.random() * 255 +
         "," +
         Math.random() * 255 +
         ")" ==
-      "black"
+        "rgb(0,0,0)" ||
+      "rgb(" +
+        Math.random() * 255 +
+        "," +
+        Math.random() * 255 +
+        "," +
+        Math.random() * 255 +
+        ")" ==
+        "rgb(255,215,0)"
     ) {
       this.color = "yellow";
     } else {
       this.color =
-        "rgba(" +
+        "rgb(" +
         Math.random() * 255 +
         "," +
         Math.random() * 255 +
@@ -131,7 +140,7 @@ class Enemies {
 const projectiles = [];
 const enemies = [];
 const superItems = [];
-let num = 1;
+let num = 1; // 전역변수로 쓰지 말 것
 
 function spawnSuperItem() {
   setInterval(() => {
@@ -146,16 +155,18 @@ function spawnSuperItem() {
       x = Math.random() * canvas.width;
       y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
     }
-    const velocity = {
-      x: 1,
-      y: 1,
+    const angle = Math.atan2(canvas.width / 2 - x, canvas.height / 2 - y);
+    let velocity;
+    velocity = {
+      x: Math.sin(angle),
+      y: Math.cos(angle),
     };
     superItems.push(new SuperItem(x, y, radius, color, velocity));
-  }, 10000);
+  }, 15000);
 }
 function spawnEnemies() {
   setInterval(() => {
-    if (num <= 10) {
+    if (num <= 12) {
       num += 0.05;
     }
     let radius = Math.random() * 30;
@@ -185,15 +196,29 @@ function animate() {
   requestAnimationFrame(animate);
   if (game) {
     cvs.clearRect(0, 0, canvas.width, canvas.height);
-
     player.draw();
     projectiles.forEach((projectile) => {
       projectile.update();
     });
-    superItems.forEach((superItem, index)=>{
+    superItems.forEach((superItem, index) => {
       superItem.update();
-
-    })
+      const dist2 = Math.hypot(player.x - superItem.x, player.y - superItem.y);
+      projectiles.forEach((projectile, projectileIndex) => {
+        const dist = Math.hypot(
+          projectile.x - superItem.x,
+          projectile.y - superItem.y
+        );
+        if (dist2 - superItem.radius - player.radius < 0) {
+          superItems.splice(index, 1);
+        } else if (dist - superItem.radius - projectile.radius < 1) {
+          setTimeout(() => {
+            item = true;
+            superItems.splice(index, 1);
+            projectiles.splice(projectileIndex, 1);
+          }, 0);
+        }
+      });
+    });
     enemies.forEach((enemy, index) => {
       enemy.update();
       const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
@@ -204,21 +229,28 @@ function animate() {
       projectiles.forEach((projectile, projectileIndex) => {
         const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
         if (dist - enemy.radius - projectile.radius < 1) {
-          if (enemy.radius - 10 > 10) {
-            gsap.to(enemy, {
-              radius: enemy.radius - 10,
-            });
-            setTimeout(() => {
-              projectiles.splice(projectileIndex, 1);
-            }, 0);
+          if (projectile.color == "red") {
+            enemies.splice(index, 1);
+            projectiles.splice(projectileIndex, 1);
+            scores++;
+            scoreDisplay.innerText = scores;
           } else {
-            setTimeout(() => {
-              enemies.splice(index, 1);
-              projectiles.splice(projectileIndex, 1);
-              scores++;
-              scoreDisplay.innerText = scores;
-              document.getElementById("total").innerHTML = scores;
-            }, 0);
+            if (enemy.radius - 10 > 10) {
+              gsap.to(enemy, {
+                radius: enemy.radius - 10,
+              });
+              setTimeout(() => {
+                projectiles.splice(projectileIndex, 1);
+              }, 0);
+            } else {
+              setTimeout(() => {
+                enemies.splice(index, 1);
+                projectiles.splice(projectileIndex, 1);
+                scores++;
+                scoreDisplay.innerText = scores;
+                document.getElementById("total").innerHTML = scores;
+              }, 0);
+            }
           }
         }
       });
@@ -235,9 +267,18 @@ addEventListener("click", (event) => {
     x: Math.sin(angle) * 6,
     y: Math.cos(angle) * 6,
   };
-  projectiles.push(
-    new Projectile(canvas.width / 2, canvas.height / 2, 5, "white", velocity)
-  );
+  if (item) {
+    projectiles.push(
+      new Projectile(canvas.width / 2, canvas.height / 2, 12, "red", velocity)
+    );
+    setTimeout(() => {
+      item = false;
+    }, 6000);
+  } else {
+    projectiles.push(
+      new Projectile(canvas.width / 2, canvas.height / 2, 5, "white", velocity)
+    );
+  }
 });
 
 function init() {
