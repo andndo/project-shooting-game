@@ -11,6 +11,11 @@ let scores = 0;
 let game = true;
 let item = false;
 
+let dPressed = false;
+let aPressed = false;
+let wPressed = false;
+let sPressed = false;
+
 class Player {
   constructor(x, y, radius, color) {
     this.x = x;
@@ -72,8 +77,8 @@ class SuperItem {
   }
 }
 
-const x = canvas.width / 2;
-const y = canvas.height / 2;
+let x = canvas.width / 2;
+let y = canvas.height / 2;
 
 const player = new Player(x, y, 30, "blue");
 
@@ -164,6 +169,7 @@ function spawnSuperItem() {
     superItems.push(new SuperItem(x, y, radius, color, velocity));
   }, 15000);
 }
+
 function spawnEnemies() {
   setInterval(() => {
     if (num <= 12) {
@@ -197,6 +203,16 @@ function animate() {
   if (game) {
     cvs.clearRect(0, 0, canvas.width, canvas.height);
     player.draw();
+    if (wPressed) {
+      console.log("ds");
+      player.y += -5;
+    } else if (dPressed) {
+      player.x += 5;
+    } else if (aPressed) {
+      player.x += -5;
+    } else if (sPressed) {
+      player.y += 5;
+    }
     projectiles.forEach((projectile) => {
       projectile.update();
     });
@@ -255,6 +271,34 @@ function animate() {
         }
       });
     });
+  }
+}
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keydown", keyUpHandler, false);
+function keyDownHandler(e) {
+  console.log(e.key);
+
+  if (e.key == "w") {
+    wPressed = true;
+  } else if (e.key == "d") {
+    dPressed = true;
+  } else if (e.key == "a") {
+    aPressed = true;
+  } else if (e.key == "s") {
+    sPressed = true;
+  }
+}
+
+function keyUpHandler(e) {
+  if (e.key == "w") {
+    wPressed = false;
+  } else if (e.key == "d") {
+    dPressed = false;
+  } else if (e.key == "a") {
+    aPressed = false;
+  } else if (e.key == "s") {
+    sPressed = false;
   }
 }
 
