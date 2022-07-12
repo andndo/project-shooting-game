@@ -3,11 +3,12 @@ const cvs = canvas.getContext("2d");
 const reStartBtn = document.querySelector(".restartBtn");
 const gameEnd = document.querySelector(".gameEnd");
 const scoreDisplay = document.querySelector(".scores");
+const elementToChange = document.getElementsByTagName("body")[0];
+elementToChange.style.cursor = "url('./asset/aim.png'), auto";
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 let scores = 0;
 let game = true;
-const colors = ["orange", "purple", "red"];
 
 class Player {
   constructor(x, y, radius, color) {
@@ -49,7 +50,7 @@ class Projectile {
   }
 }
 
-class superItem {
+class SuperItem {
   constructor(x, y, radius, color, velocity) {
     this.x = x;
     this.y = y;
@@ -79,7 +80,7 @@ const projectile = new Projectile(
   canvas.width / 2,
   canvas.height / 2,
   5,
-  "red",
+  "white",
   {
     x: 1,
     y: 1,
@@ -87,11 +88,31 @@ const projectile = new Projectile(
 );
 
 class Enemies {
-  constructor(x, y, radius, color, velocity) {
+  constructor(x, y, radius, velocity) {
     this.x = x;
     this.y = y;
     this.radius = radius;
-    this.color = color;
+    if (
+      "rgba(" +
+        Math.random() * 255 +
+        "," +
+        Math.random() * 255 +
+        "," +
+        Math.random() * 255 +
+        ")" ==
+      "black"
+    ) {
+      this.color = "yellow";
+    } else {
+      this.color =
+        "rgba(" +
+        Math.random() * 255 +
+        "," +
+        Math.random() * 255 +
+        "," +
+        Math.random() * 255 +
+        ")";
+    }
     this.velocity = velocity;
   }
   draw() {
@@ -114,8 +135,8 @@ let num = 1;
 
 function spawnSuperItem() {
   setInterval(() => {
-    const radius = 30;
-    const color = "black";
+    const radius = 40;
+    const color = "gold";
     let x;
     let y;
     if (Math.random() < 0.5) {
@@ -129,8 +150,8 @@ function spawnSuperItem() {
       x: 1,
       y: 1,
     };
-    superItems.push(new superItem(x, y, radius, color, velocity));
-  }, 2000);
+    superItems.push(new SuperItem(x, y, radius, color, velocity));
+  }, 10000);
 }
 function spawnEnemies() {
   setInterval(() => {
@@ -138,8 +159,8 @@ function spawnEnemies() {
       num += 0.05;
     }
     let radius = Math.random() * 30;
-    if (radius < 4) {
-      radius = 7;
+    if (radius < 7) {
+      radius = 25;
     }
     let x;
     let y;
@@ -150,14 +171,13 @@ function spawnEnemies() {
       x = Math.random() * canvas.width;
       y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
     }
-    const color = "green";
     const angle = Math.atan2(canvas.width / 2 - x, canvas.height / 2 - y);
     let velocity;
     velocity = {
       x: Math.sin(angle) * num,
       y: Math.cos(angle) * num,
     };
-    enemies.push(new Enemies(x, y, radius, color, velocity));
+    enemies.push(new Enemies(x, y, radius, velocity));
   }, 1000);
 }
 
@@ -165,10 +185,15 @@ function animate() {
   requestAnimationFrame(animate);
   if (game) {
     cvs.clearRect(0, 0, canvas.width, canvas.height);
+
     player.draw();
     projectiles.forEach((projectile) => {
       projectile.update();
     });
+    superItems.forEach((superItem, index)=>{
+      superItem.update();
+
+    })
     enemies.forEach((enemy, index) => {
       enemy.update();
       const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
@@ -211,7 +236,7 @@ addEventListener("click", (event) => {
     y: Math.cos(angle) * 6,
   };
   projectiles.push(
-    new Projectile(canvas.width / 2, canvas.height / 2, 5, "red", velocity)
+    new Projectile(canvas.width / 2, canvas.height / 2, 5, "white", velocity)
   );
 });
 
