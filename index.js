@@ -96,7 +96,7 @@ class Item {
 let x = canvas.width / 2;
 let y = canvas.height / 2;
 const player = new Player(x, y, 30, "blue");
-const dummy = new Dummy(x, y, 30, "#00498c");
+const dummy = new Dummy(x, y, 30, "rgba(0,0,255,0.1)");
 
 const projectile = new Projectile(
   canvas.width / 2,
@@ -207,7 +207,6 @@ const projectiles = [];
 const enemies = [];
 const powerItems = [];
 const invincibilityItems = [];
-let num = 1; // 전역변수로 쓰지 말 것
 
 function spawnInvincibilityItem() {
   // 투명화 상태가 되는 아이템
@@ -258,6 +257,7 @@ function spawnSuperItem() {
 }
 
 function spawnEnemies() {
+  let num = 1;
   setInterval(() => {
     if (num <= 12) {
       num += 0.05;
@@ -305,7 +305,8 @@ function animate() {
       player.y = canvas.height / 2;
       cnt = 0;
     }
-    cvs.clearRect(0, 0, canvas.width, canvas.height);
+    cvs.fillStyle = "rgba(0, 0, 0, 0.1)";
+    cvs.fillRect(0, 0, canvas.width, canvas.height);
     dummy.draw();
     player.draw();
     projectiles.forEach((projectile) => {
@@ -394,8 +395,8 @@ addEventListener("click", (event) => {
     event.clientY - canvas.height / 2
   );
   const velocity = {
-    x: Math.sin(angle) * 9,
-    y: Math.cos(angle) * 9,
+    x: Math.sin(angle) * 7,
+    y: Math.cos(angle) * 7,
   };
   if (powerItem) {
     projectiles.push(

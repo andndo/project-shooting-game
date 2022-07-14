@@ -8,9 +8,9 @@
   background-color: rgb(0, 0, 0, 0.5);
   z-index: 9999;
 }
-html, body {
+.gameStop html,
+body {
   margin: 0;
-  padding: 0;
 }
 h3 {
   top: 0;
@@ -70,4 +70,48 @@ body {
 .total {
   color: #fff;
   background-color: #fff;
+}
+
+#checkbox {
+  display: none;
+}
+.hamburger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: pointer;
+}
+.line {
+  position: absolute;
+  width: 20px;
+}
+.line-main::before,
+.line-main::after,
+.line-sub::before,
+.line-sub::after {
+  content: "";
+  position: absolute;
+  width: inherit;
+  height: 2px;
+}
+
+#checkbox:checked-,
+line-main::before {
+  transform: ratate(45deg);
+}
+#checkbox:checked-,
+line-main::after {
+  transform: ratate(-45deg);
+}
+#checkbox:checked-,
+line-sub::before {
+  transform: translateX(-10px);
+  opacity: 0;
+}
+#checkbox:checked-,
+line-sub::after {
+  transform: translateX(20px);
+  opacity: 0;
 }
