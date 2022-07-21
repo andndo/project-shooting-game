@@ -1,6 +1,7 @@
 const canvas = document.querySelector("canvas");
 const cvs = canvas.getContext("2d");
 const reStartBtn = document.querySelector(".restartBtn");
+const helpBtn = document.querySelector(".helpBtn");
 const gameEnd = document.querySelector(".gameEnd");
 const scoreDisplay = document.querySelector(".scores");
 const elementToChange = document.getElementsByTagName("body")[0];
@@ -31,6 +32,10 @@ class Player {
     cvs.fill();
   }
 }
+
+helpBtn.addEventListener("click", (event) => {
+  game = !game;
+});
 
 class Dummy {
   constructor(x, y, radius, color) {
