@@ -9,6 +9,10 @@ body {
   top: 0;
 }
 
+audio {
+  display: none;
+}
+
 input[id="icon"] {
   display: none;
 }
