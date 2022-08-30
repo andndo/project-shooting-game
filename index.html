@@ -23,9 +23,39 @@
       </label>
       <div id="header">
         <ul>
-          <li><a href="#">도움말</a></li>
-          <li><a href="#">설정</a></li>
-          <li><a href="#">기타</a></li>
+          <div class="bgm_btn">
+            BGM
+            <input
+              type="checkbox"
+              id="switch1"
+              name="switch1"
+              class="input__on-off"
+            />
+            <label for="switch1" class="label__on-off" id="BGM_on-off">
+              <span class="marble"></span>
+
+              <span class="on">ON</span>
+              <span class="off">OFF</span>
+            </label>
+          </div>
+          <br />
+          <!--<div class="bgm_btn">
+            효과음
+            <input
+              type="checkbox"
+              id="switch1"
+              name="switch1"
+              class="input__on-off"
+            />
+            <label for="switch1" class="label__on-off" id="sound-effect_on-off">
+              <span class="marble"></span>
+              <span class="on">ON</span>
+              <span class="off">OFF</span>
+            </label>
+          </div>-->
+          <li class="list"><a href="#">도움말</a></li>
+          <li class="list"><a href="#">설정</a></li>
+          <li class="list"><a href="#">기타</a></li>
         </ul>
       </div>
     </div>
@@ -37,6 +67,12 @@
         <button class="restartBtn">다시하기</button>
       </div>
     </div>
+
+    <audio
+      controls
+      src="./asset/베토벤 바이러스 편집본 (mp3cut.net).mp3"
+      id="mybgm"
+    ></audio>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"
       integrity="sha512-IQLehpLoVS4fNzl7IfH8Iowfm5+RiMGtHykgZJl9AWMgqx0AmJ6cRWcB+GaGVtIsnC4voMfm8f2vwtY+6oPjpQ=="

@@ -394,30 +394,72 @@ function animate() {
   }
 }
 
-addEventListener("click", (event) => {
-  const angle = Math.atan2(
-    event.clientX - canvas.width / 2,
-    event.clientY - canvas.height / 2
-  );
-  const velocity = {
-    x: Math.sin(angle) * 7,
-    y: Math.cos(angle) * 7,
-  };
-  if (powerItem) {
-    projectiles.push(
-      new Projectile(canvas.width / 2, canvas.height / 2, 12, "red", velocity)
-    );
-    if (cnt === 0) {
-      setTimeout(() => {
-        powerItem = false;
-      }, 6000);
-      cnt = 1;
+const soundEffectBtn = document.querySelector("#sound-effect_on-off");
+let soundEffect_btn_control = false;
+
+// Audio객체를 담아둘 배열
+const arr_sound = [];
+if (game) {
+  // 50개의 Audio객체를 배열에 담아둔다.
+  for (let i = 0; i < 20; i++) {
+    const sound = new Audio();
+    sound.src = "./asset/효과음.mp3";
+
+    // 크롬 예외 처리: audio 재생이 끝나면, 다시 로드해준다
+    sound.addEventListener("ended", function () {
+      if (window.chrome) {
+        this.load();
+      }
+      this.pause();
+    });
+
+    arr_sound.push(sound);
+  }
+}
+
+// 버튼을 누를 때마다, Audio객체를 재생
+canvas.addEventListener("click", (event) => {
+  if (game) {
+    if (soundEffect_btn_control) {
+      for (let i = 0; i < arr_sound.length; i++) {
+        if (arr_sound[i].paused) {
+          // 재생중이 아닌 Audio객체를 찾아서
+          arr_sound[i].play(); // 1회만 재생하고
+          break; // 반복문을 나간다.
+        }
+      }
     }
-  } else {
-    projectiles.push(
-      new Projectile(canvas.width / 2, canvas.height / 2, 5, "white", velocity)
+
+    const angle = Math.atan2(
+      event.clientX - canvas.width / 2,
+      event.clientY - canvas.height / 2
     );
-    cnt = 0;
+    const velocity = {
+      x: Math.sin(angle) * 7,
+      y: Math.cos(angle) * 7,
+    };
+    if (powerItem) {
+      projectiles.push(
+        new Projectile(canvas.width / 2, canvas.height / 2, 12, "red", velocity)
+      );
+      if (cnt === 0) {
+        setTimeout(() => {
+          powerItem = false;
+        }, 6000);
+        cnt = 1;
+      }
+    } else {
+      projectiles.push(
+        new Projectile(
+          canvas.width / 2,
+          canvas.height / 2,
+          5,
+          "white",
+          velocity
+        )
+      );
+      cnt = 0;
+    }
   }
 });
 
@@ -435,3 +477,17 @@ reStartBtn.addEventListener("click", () => {
   location.reload();
 });
 init();
+
+const musicBtn = document.querySelector("#BGM_on-off");
+/*추가된 부분: 종료되면 처음부터 다시 재생*/
+
+let BGM_btn_control = false;
+const audio = new Audio("./asset/베토벤 바이러스 편집본 (mp3cut.net).mp3");
+//audio.autoplay = true;
+//bgm버튼 클릭시 음악 재생
+musicBtn.addEventListener("click", (event) => {
+  BGM_btn_control = !BGM_btn_control;
+  if (BGM_btn_control) {
+    audio.play();
+  } else audio.pause();
+});
