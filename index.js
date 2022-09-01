@@ -479,6 +479,8 @@ reStartBtn.addEventListener("click", () => {
 init();
 
 const musicBtn = document.querySelector("#BGM_on-off");
+const effectBtn = document.querySelector("#sound-effect_on-off");
+
 /*추가된 부분: 종료되면 처음부터 다시 재생*/
 
 let BGM_btn_control = false;
@@ -489,5 +491,11 @@ musicBtn.addEventListener("click", (event) => {
   BGM_btn_control = !BGM_btn_control;
   if (BGM_btn_control) {
     audio.play();
+
+    audio.loop = BGM_btn_control;
   } else audio.pause();
+});
+
+effectBtn.addEventListener("click", (event) => {
+  soundEffect_btn_control = !soundEffect_btn_control;
 });
