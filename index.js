@@ -13,6 +13,9 @@ let game = true;
 let powerItem = false;
 let invincibilityItem = false;
 
+let x = canvas.width / 2;
+let y = canvas.height / 2;
+
 let dPressed = false;
 let aPressed = false;
 let wPressed = false;
@@ -32,7 +35,6 @@ class Player {
     cvs.fill();
   }
 }
-
 helpBtn.addEventListener("click", (event) => {
   game = !game;
 });
@@ -98,10 +100,8 @@ class Item {
   }
 }
 
-let x = canvas.width / 2;
-let y = canvas.height / 2;
-const player = new Player(x, y, 30, "blue");
-const dummy = new Dummy(x, y, 30, "rgba(0,0,255,0.1)");
+const player = new Player(x, y, 20, "blue");
+const dummy = new Dummy(x, y, 20, "rgba(0,0,255,0.1)");
 
 const projectile = new Projectile(
   canvas.width / 2,
@@ -164,50 +164,49 @@ class Enemies {
 }
 
 document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keydown", keyUpHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
 function keyDownHandler(e) {
-  console.log(e.key);
-
-  if (e.key == "w") {
+  if (e.key == "ArrowUp" || e.key == "w") {
     wPressed = true;
-  } else if (e.key == "d") {
+  } else if (e.key == "ArrowRight" || e.key == "d") {
     dPressed = true;
-  } else if (e.key == "a") {
+  } else if (e.key == "ArrowLeft" || e.key == "a") {
     aPressed = true;
-  } else if (e.key == "s") {
+  } else if (e.key == "ArrowDown" || e.key == "s") {
     sPressed = true;
   }
-  console.log(dPressed);
 }
 
 function keyUpHandler(e) {
-  if (e.key == "w") {
+  if (e.key == "ArrowUp" || e.key == "w") {
     wPressed = false;
-  } else if (e.key == "d") {
+  } else if (e.key == "ArrowRight" || e.key == "d") {
     dPressed = false;
-  } else if (e.key == "a") {
+  } else if (e.key == "ArrowLeft" || e.key == "a") {
     aPressed = false;
-  } else if (e.key == "s") {
+  } else if (e.key == "ArrowDown" || e.key == "s") {
     sPressed = false;
   }
-  console.log(dPressed);
 }
 
-function playerMove() {
-  if (wPressed) {
-    console.log("ds");
-    y -= 5;
-  } else if (dPressed) {
-    x += 5;
-  } else if (aPressed) {
-    x -= 5;
-  } else if (sPressed) {
-    y += 5;
+function playerDraw() {
+  player.draw();
+
+  if (dPressed && x < canvas.width - 20) {
+    player.x += 2;
+  } else if (aPressed && x > 0) {
+    player.x -= 2;
+  } else if (sPressed && y < canvas.height - 20) {
+    player.y += 2;
+  } else if (wPressed && y > 0) {
+    player.y -= 2;
   }
 }
+
+setInterval(playerDraw, 10);
+
 function ghostMode() {}
 
-setInterval(playerMove, 10);
 const projectiles = [];
 const enemies = [];
 const powerItems = [];
@@ -294,7 +293,7 @@ let cnt = 0;
 
 function animate() {
   requestAnimationFrame(animate);
-  playerMove();
+  playerDraw();
   if (game) {
     if (invincibilityItem) {
       player.x = ghostMode;
@@ -306,13 +305,11 @@ function animate() {
         cnt = 1;
       }
     } else {
-      player.x = canvas.width / 2;
-      player.y = canvas.height / 2;
       cnt = 0;
     }
-    cvs.fillStyle = "rgba(0, 0, 0, 0.1)";
+    cvs.fillStyle = "rgba(0, 0, 0, 0.15)";
     cvs.fillRect(0, 0, canvas.width, canvas.height);
-    dummy.draw();
+    // dummy.draw();
     player.draw();
     projectiles.forEach((projectile) => {
       projectile.update();
@@ -431,8 +428,8 @@ canvas.addEventListener("click", (event) => {
     }
 
     const angle = Math.atan2(
-      event.clientX - canvas.width / 2,
-      event.clientY - canvas.height / 2
+      event.clientX - player.x,
+      event.clientY - player.y
     );
     const velocity = {
       x: Math.sin(angle) * 7,
@@ -440,7 +437,7 @@ canvas.addEventListener("click", (event) => {
     };
     if (powerItem) {
       projectiles.push(
-        new Projectile(canvas.width / 2, canvas.height / 2, 12, "red", velocity)
+        new Projectile(player.x, player.y, 12, "red", velocity)
       );
       if (cnt === 0) {
         setTimeout(() => {
@@ -451,8 +448,8 @@ canvas.addEventListener("click", (event) => {
     } else {
       projectiles.push(
         new Projectile(
-          canvas.width / 2,
-          canvas.height / 2,
+          player.x,
+          player.y,
           5,
           "white",
           velocity
@@ -468,7 +465,7 @@ function init() {
   spawnEnemies();
   spawnSuperItem();
   spawnInvincibilityItem();
-  playerMove();
+  playerDraw();
 }
 
 reStartBtn.addEventListener("click", () => {
