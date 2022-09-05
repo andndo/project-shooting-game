@@ -173,7 +173,8 @@ function keyUpHandler(e) {
 }
 
 function playerDraw() {
-  if (scores >= 5) {
+  if (scores >= 60) {
+    //60점이상이 되면 움직여지기
     player.draw();
 
     if (dPressed && x < canvas.width - 20) {
@@ -215,7 +216,7 @@ function spawnSuperItem() {
       y: Math.cos(angle),
     };
     powerItems.push(new Item(x, y, radius, color, velocity));
-  }, 5000);
+  }, 15000);
 }
 
 function spawnEnemies() {
@@ -393,7 +394,6 @@ reStartBtn.addEventListener("click", () => {
   gameEnd.style.display = "flex"; //종료창 제거
   location.reload();
 });
-init();
 
 const musicBtn = document.querySelector("#BGM_on-off");
 const effectBtn = document.querySelector("#sound-effect_on-off");
@@ -415,4 +415,12 @@ musicBtn.addEventListener("click", (event) => {
 
 effectBtn.addEventListener("click", (event) => {
   soundEffect_btn_control = !soundEffect_btn_control;
+});
+
+const gameStart = document.querySelector(".gameStart");
+const StartBtn = document.querySelector(".startBtn");
+
+StartBtn.addEventListener("click", () => {
+  gameStart.style.display = "none";
+  init();
 });
