@@ -11,7 +11,6 @@ canvas.height = innerHeight;
 let scores = 0;
 let game = true;
 let powerItem = false;
-let invincibilityItem = false;
 
 let x = canvas.width / 2;
 let y = canvas.height / 2;
@@ -38,21 +37,6 @@ class Player {
 helpBtn.addEventListener("click", (event) => {
   game = !game;
 });
-
-class Dummy {
-  constructor(x, y, radius, color) {
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-    this.color = color;
-  }
-  draw() {
-    cvs.beginPath();
-    cvs.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    cvs.fillStyle = this.color;
-    cvs.fill();
-  }
-}
 
 function showGameOverText() {
   gameEnd.style.display = "block";
@@ -101,7 +85,6 @@ class Item {
 }
 
 const player = new Player(x, y, 20, "blue");
-const dummy = new Dummy(x, y, 20, "rgba(0,0,255,0.1)");
 
 const projectile = new Projectile(
   canvas.width / 2,
@@ -190,51 +173,26 @@ function keyUpHandler(e) {
 }
 
 function playerDraw() {
-  player.draw();
+  if (scores >= 5) {
+    player.draw();
 
-  if (dPressed && x < canvas.width - 20) {
-    player.x += 2;
-  } else if (aPressed && x > 0) {
-    player.x -= 2;
-  } else if (sPressed && y < canvas.height - 20) {
-    player.y += 2;
-  } else if (wPressed && y > 0) {
-    player.y -= 2;
+    if (dPressed && x < canvas.width - 20) {
+      player.x += 2;
+    } else if (aPressed && x > 0) {
+      player.x -= 2;
+    } else if (sPressed && y < canvas.height - 20) {
+      player.y += 2;
+    } else if (wPressed && y > 0) {
+      player.y -= 2;
+    }
   }
 }
 
 setInterval(playerDraw, 10);
 
-function ghostMode() {}
-
 const projectiles = [];
 const enemies = [];
 const powerItems = [];
-const invincibilityItems = [];
-
-function spawnInvincibilityItem() {
-  // 투명화 상태가 되는 아이템
-  setInterval(() => {
-    const radius = 40;
-    const color = "white";
-    let x;
-    let y;
-    if (Math.random() < 0.5) {
-      x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
-      y = Math.random() * canvas.height;
-    } else {
-      x = Math.random() * canvas.width;
-      y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
-    }
-    const angle = Math.atan2(canvas.width / 2 - x, canvas.height / 2 - y);
-    let velocity;
-    velocity = {
-      x: Math.sin(angle),
-      y: Math.cos(angle),
-    };
-    invincibilityItems.push(new Item(x, y, radius, color, velocity));
-  }, 20000);
-}
 
 function spawnSuperItem() {
   // 탄알커지고 한방컷내는 아이템
@@ -257,7 +215,7 @@ function spawnSuperItem() {
       y: Math.cos(angle),
     };
     powerItems.push(new Item(x, y, radius, color, velocity));
-  }, 15000);
+  }, 5000);
 }
 
 function spawnEnemies() {
@@ -295,44 +253,13 @@ function animate() {
   requestAnimationFrame(animate);
   playerDraw();
   if (game) {
-    if (invincibilityItem) {
-      player.x = ghostMode;
-      player.y = ghostMode;
-      if (cnt === 0) {
-        setTimeout(() => {
-          invincibilityItem = false;
-        }, 5000);
-        cnt = 1;
-      }
-    } else {
-      cnt = 0;
-    }
     cvs.fillStyle = "rgba(0, 0, 0, 0.15)";
     cvs.fillRect(0, 0, canvas.width, canvas.height);
-    // dummy.draw();
     player.draw();
     projectiles.forEach((projectile) => {
       projectile.update();
     });
-    invincibilityItems.forEach((ghostItem, index) => {
-      ghostItem.update();
-      const dist2 = Math.hypot(player.x - ghostItem.x, player.y - ghostItem.y);
-      projectiles.forEach((projectile, projectileIndex) => {
-        const dist = Math.hypot(
-          projectile.x - ghostItem.x,
-          projectile.y - ghostItem.y
-        );
-        if (dist2 - ghostItem.radius - player.radius < 0) {
-          invincibilityItems.splice(index, 1);
-        } else if (dist - ghostItem.radius - projectile.radius < 1) {
-          setTimeout(() => {
-            invincibilityItem = true;
-            invincibilityItems.splice(index, 1);
-            projectiles.splice(projectileIndex, 1);
-          }, 0);
-        }
-      });
-    });
+
     powerItems.forEach((superItem, index) => {
       superItem.update();
       const dist2 = Math.hypot(player.x - superItem.x, player.y - superItem.y);
@@ -344,6 +271,7 @@ function animate() {
         if (dist2 - superItem.radius - player.radius < 0) {
           powerItems.splice(index, 1);
         } else if (dist - superItem.radius - projectile.radius < 1) {
+          player.color = "yellow";
           setTimeout(() => {
             powerItem = true;
             powerItems.splice(index, 1);
@@ -436,9 +364,7 @@ canvas.addEventListener("click", (event) => {
       y: Math.cos(angle) * 7,
     };
     if (powerItem) {
-      projectiles.push(
-        new Projectile(player.x, player.y, 12, "red", velocity)
-      );
+      projectiles.push(new Projectile(player.x, player.y, 12, "red", velocity));
       if (cnt === 0) {
         setTimeout(() => {
           powerItem = false;
@@ -447,14 +373,9 @@ canvas.addEventListener("click", (event) => {
       }
     } else {
       projectiles.push(
-        new Projectile(
-          player.x,
-          player.y,
-          5,
-          "white",
-          velocity
-        )
+        new Projectile(player.x, player.y, 5, "white", velocity)
       );
+      player.color = "blue";
       cnt = 0;
     }
   }
@@ -464,7 +385,6 @@ function init() {
   animate();
   spawnEnemies();
   spawnSuperItem();
-  spawnInvincibilityItem();
   playerDraw();
 }
 
