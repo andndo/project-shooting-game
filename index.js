@@ -424,3 +424,15 @@ StartBtn.addEventListener("click", () => {
   gameStart.style.display = "none";
   init();
 });
+
+const advice = document.querySelector(".advice");
+const adviceBtn = document.querySelector("#adviceBtn");
+
+function showAdviceText() {
+  advice.style.display = "block";
+}
+
+adviceBtn.addEventListener("click", (event) => {
+  showAdviceText();
+  console.log("Asdf");
+});
