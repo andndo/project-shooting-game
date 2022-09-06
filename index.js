@@ -118,6 +118,16 @@ class Boss {
   }
 }
 
+const boss = new Boss(  
+canvas.width / 2,
+canvas.height,
+5000,
+"white",
+{
+  x: 1,
+  y: 1,
+});
+
 class Enemies {
   constructor(x, y, radius, velocity) {
     this.x = x;
