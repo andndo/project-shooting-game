@@ -98,7 +98,7 @@ const projectile = new Projectile(
 );
 
 class Boss {
-  constructor(x, y, radius, velocity) {
+  constructor(x, y, radius, color, velocity) {
     this.x = x;
     this.y = y;
     this.radius = radius;
@@ -250,12 +250,18 @@ function spawnSuperItem() {
   }, 15000);
 }
 
+function spawnBoss() {
+  if(scores <= 60){
+
+  }
+}
+
 function spawnEnemies() {
   if (scores >= 60) {
     let num = 1;
     setInterval(() => {
       if (num <= 12) {
-        num += 0.05;
+        num += 0.1;
       }
       let radius = Math.random() * 30;
       if (radius < 7) {
@@ -314,8 +320,7 @@ function animate() {
         }
       });
     });
-    enemies.forEach((enem
-      y, index) => {
+    enemies.forEach((enemy, index) => {
       enemy.update();
       const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
       if (dist - enemy.radius - player.radius < 0) {
