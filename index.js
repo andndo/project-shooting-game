@@ -257,7 +257,7 @@ function spawnBoss() {
 }
 
 function spawnEnemies() {
-  if (scores >= 60) {
+  if (scores <= 60) {
     let num = 1;
     setInterval(() => {
       if (num <= 12) {
