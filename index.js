@@ -118,16 +118,6 @@ class Boss {
   }
 }
 
-const boss = new Boss(  
-canvas.width / 2,
-canvas.height,
-5000,
-"white",
-{
-  x: 1,
-  y: 1,
-});
-
 class Enemies {
   constructor(x, y, radius, velocity) {
     this.x = x;
@@ -225,6 +215,7 @@ setInterval(playerDraw, 10);
 const projectiles = [];
 const enemies = [];
 const powerItems = [];
+const bossArray = [];
 
 function spawnSuperItem() {
   // 탄알커지고 한방컷내는 아이템
@@ -251,7 +242,12 @@ function spawnSuperItem() {
 }
 
 function spawnBoss() {
-  if(scores <= 60){
+  if (scores <= 60) {
+    const x = canvas.width / 2
+    const y = 100;
+    const radius = 5000;
+    const color = "#fff"
+    
 
   }
 }
