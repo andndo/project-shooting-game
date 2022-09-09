@@ -219,35 +219,37 @@ const bossArray = [];
 
 function spawnSuperItem() {
   // 탄알커지고 한방컷내는 아이템
-  setInterval(() => {
-    const radius = 40;
-    const color = "gold";
-    let x;
-    let y;
-    if (Math.random() < 0.5) {
-      x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
-      y = Math.random() * canvas.height;
-    } else {
-      x = Math.random() * canvas.width;
-      y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
-    }
-    const angle = Math.atan2(canvas.width / 2 - x, canvas.height / 2 - y);
-    let velocity;
-    velocity = {
-      x: Math.sin(angle),
-      y: Math.cos(angle),
-    };
-    powerItems.push(new Item(x, y, radius, color, velocity));
-  }, 15000);
+  if (scores <= 60) {
+    setInterval(() => {
+      const radius = 40;
+      const color = "gold";
+      let x;
+      let y;
+      if (Math.random() < 0.5) {
+        x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
+        y = Math.random() * canvas.height;
+      } else {
+        x = Math.random() * canvas.width;
+        y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
+      }
+      const angle = Math.atan2(canvas.width / 2 - x, canvas.height / 2 - y);
+      let velocity;
+      velocity = {
+        x: Math.sin(angle),
+        y: Math.cos(angle),
+      };
+      powerItems.push(new Item(x, y, radius, color, velocity));
+    }, 7000);
+  }
 }
 
 function spawnBoss() {
-  if (scores <= 60) {
+  if (scores >= 60) {
     const x = canvas.width / 2;
     const y = 100;
     const radius = 5000;
     const color = "#fff";
-    const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x);
+    const angle = Math.atan2(canvas.height / 2, canvas.width / 2 - x);
     const velocity = {
       x: Math.cos(angle),
       y: Math.sin(angle),
