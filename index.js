@@ -243,12 +243,16 @@ function spawnSuperItem() {
 
 function spawnBoss() {
   if (scores <= 60) {
-    const x = canvas.width / 2
+    const x = canvas.width / 2;
     const y = 100;
     const radius = 5000;
-    const color = "#fff"
-    
-
+    const color = "#fff";
+    const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x);
+    const velocity = {
+      x: Math.cos(angle),
+      y: Math.sin(angle),
+    };
+    bossArray.push(new Boss(x, y, radius, color, velocity));
   }
 }
 
