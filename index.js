@@ -141,7 +141,7 @@ class Enemies {
         ")" ==
         "rgb(255,215,0)"
     ) {
-      this.color = "yellow";
+      this.color = "red";
     } else {
       this.color =
         "rgb(" +
@@ -314,6 +314,14 @@ function animate() {
           powerItems.splice(index, 1);
         } else if (dist - superItem.radius - projectile.radius < 1) {
           player.color = "yellow";
+          player.box-shadow = "0 0 18px #fff,
+          "0 0 26px rgb(207, 51, 147)",
+          "0 0 32px rgb(207, 51, 147)",
+          "0 0 38px rgb(207, 51, 147)",
+          "0 0 42px rgb(207, 51, 147)",
+          "0 0 48px rgb(207, 51, 147)",
+          "0 0 54px rgb(207, 51, 147)"
+                 
           setTimeout(() => {
             powerItem = true;
             powerItems.splice(index, 1);
