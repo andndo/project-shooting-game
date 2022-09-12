@@ -310,6 +310,7 @@ function animate() {
           projectile.x - superItem.x,
           projectile.y - superItem.y
         );
+        const asdf = "adfs00";
         if (dist2 - superItem.radius - player.radius < 0) {
           powerItems.splice(index, 1);
         } else if (dist - superItem.radius - projectile.radius < 1) {
