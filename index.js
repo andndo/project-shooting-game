@@ -315,7 +315,7 @@ function animate() {
           powerItems.splice(index, 1);
         } else if (dist - superItem.radius - projectile.radius < 1) {
           player.color = "yellow";
-             
+
           setTimeout(() => {
             powerItem = true;
             powerItems.splice(index, 1);
@@ -465,6 +465,7 @@ const StartBtn = document.querySelector(".startBtn");
 
 StartBtn.addEventListener("click", () => {
   gameStart.style.display = "none";
+  console.log("Start");
   init();
 });
 
